@@ -4,7 +4,7 @@ import Browser
 import Html exposing (Html, button, div, text, h2)
 import Http
 import Http exposing (header)
-import Json.Decode exposing (Decoder, field, string)
+import Json.Decode as Decode exposing (Decoder, decodeString, field, maybe, string)
 
 main =
   Browser.element
@@ -14,12 +14,12 @@ main =
       , view = view
       }
 
-type Msg = Fetch | GotGameSession (Result Http.Error String)
+type Msg = Fetch | GotGameSession (Result Http.Error (Maybe String))
 
 type GameSession
     = Failure
     |Loading
-    |Success String
+    |Success (Maybe String)
 
 type alias Model =
     { token: String
@@ -45,9 +45,9 @@ getGameSession token =
         , tracker = Nothing
         }
 
-gameSessionDecoder : Decoder String
+gameSessionDecoder : Decoder (Maybe String)
 gameSessionDecoder =
-  field "id" string
+    field "id" string |> Decode.maybe
 
 updateGameSession: Msg -> Model -> (Model, Cmd Msg)
 updateGameSession msg model =
@@ -73,5 +73,13 @@ viewGameSession gameSession =
   case gameSession of
     Loading -> text "Loading..."
     Failure -> text "Error"
-    Success id ->  div [] [text id]
+    Success id ->  div [] [text (renderMaybeStr id)]
+
+
+renderMaybeStr: Maybe String -> String
+renderMaybeStr a =
+    case a of
+        Just x -> x
+        Nothing -> "N/A"
+
 

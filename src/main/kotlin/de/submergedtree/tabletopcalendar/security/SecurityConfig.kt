@@ -33,6 +33,9 @@ class SecurityConfig(@Value("\${auth0.audience}") private val audience: String,
                 .pathMatchers("/auth_config.json").permitAll()
                 .pathMatchers("/api/**").authenticated()
                 .and()
+                .httpBasic().disable()
+                .formLogin().disable()
+                .logout().disable()
                 .oauth2ResourceServer().jwt()
         return http.build()
     }
