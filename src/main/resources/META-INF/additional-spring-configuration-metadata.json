@@ -4,5 +4,5 @@
       "name": "auth0.audience",
       "type": "java.lang.String",
       "description": "Description for auth0.audience."
-  }
-] }
+    }
+  ] }

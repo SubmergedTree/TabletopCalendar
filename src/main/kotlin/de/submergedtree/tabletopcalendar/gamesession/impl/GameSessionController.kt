@@ -15,4 +15,6 @@ class GameSessionController(private val gameSessionService: GameSessionService) 
     fun getGameSessionHandler(req: ServerRequest) = ServerResponse.ok()
             .body(gameSessionService.getSession("123"), GameSession::class.java)
 
+    fun getAllGameSessionsHandler(req: ServerRequest) = ServerResponse.ok()
+            .body(gameSessionService.getSession("123"), GameSession::class.java)
 }

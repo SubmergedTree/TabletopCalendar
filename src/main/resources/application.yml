@@ -9,3 +9,10 @@ spring:
   thymeleaf:
     reactive:
       max-chunk-size: 8192
+
+game:
+  searchCacheMaxSize:
+    maxSize: 1000
+    expire: 1
+  attributesCache:
+

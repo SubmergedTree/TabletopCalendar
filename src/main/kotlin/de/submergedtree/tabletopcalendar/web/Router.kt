@@ -1,29 +1,34 @@
 package de.submergedtree.tabletopcalendar.web
 
 import de.submergedtree.tabletopcalendar.gamesession.impl.GameSessionController
-import de.submergedtree.tabletopcalendar.user.impl.UserController
-import org.springframework.context.annotation.Configuration
-import org.springframework.http.MediaType
+import de.submergedtree.tabletopcalendar.user.web.UserHandler
 import org.springframework.web.reactive.function.server.router
 
-@Configuration
+//@Configuration
 class Router(private val gameSessionController: GameSessionController,
-             private val userController: UserController) {
+             private val userHandler: UserHandler) {
 
-    fun routes() = router {
-        GET("/") { ok().render("index") }
-        "api/".nest {
-            accept(MediaType.APPLICATION_JSON).nest {
-                "gameSession".nest {
-                    GET("/", gameSessionController::getGameSessionHandler)
+   // @Bean
+    fun apiRouter() = router {
+        //GET("/") { ok().render("index") }
+        "/api".nest {
+          //  accept(MediaType.APPLICATION_JSON).nest {
+          /*      "/gameSession".nest {
+                    GET("/detail", gameSessionController::getGameSessionHandler)
+                    GET("/all", gameSessionController::getAllGameSessionsHandler)
+                    DELETE("/remove")
+                    POST("/update")
+                }*/
+                "/user".nest {
+                    GET("/username", userHandler::getUsernameHandler)
+                    GET("/getAll", userHandler::getAllUsersHandler)
+                    (POST("/changeUsername") and queryParam("username") {true})
+                            .invoke(userHandler::getUsernameHandler)
                 }
-                "user".nest {
-                    GET("/username", userController::getUsernameHandler)
-                }
-                "game".nest {
-
-                }
+/*                "/game".nest {
+                    GET("/search")
+                }*/
             }
-        }
+      //  }
     }
 }
