@@ -15,10 +15,10 @@ import java.util.concurrent.TimeUnit
 
 // https://stackoverflow.com/questions/52787925/cache-the-result-of-a-mono-from-a-webclient-call-in-a-spring-webflux-web-applica
 @Service
-class CaffeineSearchObjectCacheService(@Qualifier("SearchObjectCache") val cache: Cache<String, GameSearchObject>): SearchObjectCacheService {
+class CaffeineSearchObjectCacheService(@Qualifier("SearchObjectCache") val cache: SearchObjectCache): SearchObjectCacheService {
 
     override fun cache(searchObject: GameSearchObject): Mono<String> {
-        val searchId = UUID.randomUUID().toString()
+        val searchId = searchObject.hashCode().toString()
         cache.put(searchId, searchObject)
         return Mono.just(searchId)
     }

@@ -9,6 +9,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.util.concurrent.TimeUnit
 
+typealias SearchCache = Cache<String, Array<GameSearchObject>>
+typealias AttributesCache = Cache<String, Map<String, String>>
+typealias SearchObjectCache = Cache<String, GameSearchObject>
+
 @Configuration
 class CacheConfiguration(
         @Value("\${game.searchCache.maxSize}") private val searchCacheMaxSize: Long,
@@ -37,7 +41,7 @@ class CacheConfiguration(
 
     @Bean
     @Qualifier("SearchObjectCache")
-    fun searchObjectCache(): Cache<String, GameSearchObject> =
+    fun searchObjectCache(): SearchObjectCache =
             Caffeine.newBuilder()
                     .maximumSize(1000)
                     .expireAfterWrite(5, TimeUnit.MINUTES)
