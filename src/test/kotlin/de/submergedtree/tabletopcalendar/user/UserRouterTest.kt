@@ -5,7 +5,7 @@ import de.submergedtree.tabletopcalendar.user.impl.UserDao
 import de.submergedtree.tabletopcalendar.user.web.UserHandler
 import de.submergedtree.tabletopcalendar.user.web.UserRouter
 import de.submergedtree.tabletopcalendar.user.web.UsernameData
-import de.submergedtree.tabletopcalendar.users
+import de.submergedtree.tabletopcalendar.usersFlux
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -41,7 +41,7 @@ class UserRouterTest {
         Mockito.`when`(userHandler.getAllUsersHandler(any()))
                 .thenReturn(ServerResponse
                         .ok()
-                        .body(users, UserDao::class.java))
+                        .body(usersFlux, UserDao::class.java))
 
         client.get()
                 .uri("/api/user/getAll")

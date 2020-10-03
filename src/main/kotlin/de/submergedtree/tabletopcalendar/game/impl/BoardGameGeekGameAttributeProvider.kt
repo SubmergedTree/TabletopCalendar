@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.submergedtree.tabletopcalendar.game.GameAttributeProvider
 import de.submergedtree.tabletopcalendar.game.GameSearchObject
+import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -14,9 +15,11 @@ import kotlin.collections.HashMap
 @Component
 class BoardGameGeekGameAttributeProvider(
         @Qualifier("xmlWebClient") private val webClient: WebClient
-) : GameAttributeProvider {
+) : GameAttributeProvider, Logging {
 
     val baseUrl = "http://www.boardgamegeek.com/xmlapi"
+
+    override val provider = "BoardGameGeek"
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private data class BGGBoardgameSearchResponse(
@@ -42,6 +45,7 @@ class BoardGameGeekGameAttributeProvider(
                     .map { convertXmlString2DataObject(it, Array<BGGBoardgameSearchResponse>::class.java) }
                     .flatMapMany { Flux.fromArray(it) }
                     .filter { it.name.isNotBlank() }
+                    .doOnComplete{ logger.info("Query Board Game Geek with query: $query")}
                     .map {
                         BGGSearchObject(it.name,
                                 it.objectid,

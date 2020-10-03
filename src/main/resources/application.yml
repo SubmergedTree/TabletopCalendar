@@ -11,8 +11,13 @@ spring:
       max-chunk-size: 8192
 
 game:
-  searchCacheMaxSize:
+  searchCache:
     maxSize: 1000
     expire: 1
   attributesCache:
+    maxSize: 1000
+    expire: 1
+  searchObject:
+    maxSize: 1000
+    expire: 1
 

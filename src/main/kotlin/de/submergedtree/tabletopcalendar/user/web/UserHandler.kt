@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono
 class UserHandler(private val userService : UserService) : Logging {
 
     fun getAllUsersHandler(req: ServerRequest): Mono<ServerResponse> {
-        logger.info(req.headers().header("name"))
         logger.info("get All request")
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)

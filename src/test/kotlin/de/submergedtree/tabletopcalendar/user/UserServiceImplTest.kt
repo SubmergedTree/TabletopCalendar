@@ -6,7 +6,7 @@ import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
 import de.submergedtree.tabletopcalendar.user.impl.UserDao
 import de.submergedtree.tabletopcalendar.user.impl.UserRepository
 import de.submergedtree.tabletopcalendar.user.impl.UserServiceImpl
-import de.submergedtree.tabletopcalendar.users
+import de.submergedtree.tabletopcalendar.usersFlux
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -34,8 +34,8 @@ class UserServiceImplTest {
     @Test
     fun getAllTest() {
         Mockito.`when`(userRepository.findAll())
-                .thenReturn(users)
-        val match = Predicate<UserDao> { { u: UserDao -> users.any { saved: UserDao -> saved == u } }(it)
+                .thenReturn(usersFlux)
+        val match = Predicate<UserDao> { { u: UserDao -> usersFlux.any { saved: UserDao -> saved == u } }(it)
                 .block()?: false }
 
         StepVerifier.create(userService.getAll())

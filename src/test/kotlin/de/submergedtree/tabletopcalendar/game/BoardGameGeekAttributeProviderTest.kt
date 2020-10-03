@@ -120,7 +120,7 @@ class BoardGameGeekAttributeProviderTest @Autowired constructor(val bggAp: Board
 
     @Test
     fun foo() {
-        bggAp.search("Cosmic%20Encounter");
+        bggAp.search("Cosmic Encounter").subscribe()
 
     }
 
@@ -134,11 +134,11 @@ class BoardGameGeekAttributeProviderTest @Autowired constructor(val bggAp: Board
             var termsofuse: String = "")
 
 
-    @Test
+    /* @Test
     fun `test Serialization`() {
 
         print(convertXmlString2DataObject(testStr, Array<BGGBoardgameSearchResponse>::class.java))
-    }
+    }*/
 
     fun convertXmlString2DataObject(xmlString: String, cls: Class<*>): Any {
         val xmlMapper = XmlMapper()
