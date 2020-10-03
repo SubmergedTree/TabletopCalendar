@@ -7,24 +7,24 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-typealias CacheProxyFactory = (GameAttributeProvider) -> AttributeProviderCacheProxy
+typealias CacheProxyDecorator = (GameAttributeProvider) -> AttributeProviderCacheProxy
 
 @Configuration
 class CacheProxyDecoratorConfiguration  {
 
     @Bean
-    @Qualifier("CacheProxyFactory")
-    fun cacheProxyFactory(
+    @Qualifier("CacheProxyDecorator")
+    fun cacheProxyDecorator(
             @Qualifier("SearchCache") searchCache: Cache<String, Array<GameSearchObject>>,
             @Qualifier("AttributesCache") attributesCache: Cache<String, Map<String, String>>
-    ): CacheProxyFactory =
+    ): CacheProxyDecorator =
             { toDecorate: GameAttributeProvider -> AttributeProviderCacheProxy(toDecorate, searchCache, attributesCache) }
 
     @Bean
     @Qualifier("Cached")
     fun bggAttributeProvider(
-            @Qualifier("CacheProxyFactory") cpf: CacheProxyFactory,
+            @Qualifier("CacheProxyDecorator") cpd: CacheProxyDecorator,
             bggAttributeProvider: BoardGameGeekGameAttributeProvider
-    ): GameAttributeProvider = cpf(bggAttributeProvider)
+    ): GameAttributeProvider = cpd(bggAttributeProvider)
 
 }
