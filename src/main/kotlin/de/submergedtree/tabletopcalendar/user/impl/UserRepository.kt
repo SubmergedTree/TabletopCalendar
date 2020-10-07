@@ -7,4 +7,4 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository
 @Document
 data class UserDao(@Id val userKey: String, val userName: String)
 
-interface UserRepository : ReactiveMongoRepository<UserDao, String>
+interface UserRepository: ReactiveMongoRepository<UserDao, String>
