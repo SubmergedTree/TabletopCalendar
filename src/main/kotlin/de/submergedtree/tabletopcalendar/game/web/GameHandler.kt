@@ -2,7 +2,6 @@ package de.submergedtree.tabletopcalendar.game.web
 
 import de.submergedtree.tabletopcalendar.game.FaultyQuery
 import de.submergedtree.tabletopcalendar.game.GameService
-import de.submergedtree.tabletopcalendar.game.SearchGameResponse
 import de.submergedtree.tabletopcalendar.web.parseCommaSeparatedStringToArray
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.http.HttpStatus
@@ -14,7 +13,7 @@ import reactor.core.publisher.Mono
 import java.util.*
 import kotlin.collections.ArrayList
 
-data class SearchBadRequest(val error: String)
+data class ErrorBody(val error: String)
 
 @Component
 class GameHandler(private val gameService: GameService): Logging {
@@ -33,7 +32,7 @@ class GameHandler(private val gameService: GameService): Logging {
                 }.onErrorResume {
                     when(it!!) {
                         is FaultyQuery -> ServerResponse.badRequest()
-                                .bodyValue(SearchBadRequest("Search param must be longer then 3 chars"))
+                                .bodyValue(ErrorBody("Search param must be longer then 3 chars"))
                         else -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
                     }
                 }
@@ -41,7 +40,18 @@ class GameHandler(private val gameService: GameService): Logging {
 
 
     fun getGameDetail(req: ServerRequest): Mono<ServerResponse> {
-        TODO()
+        logger.info("get game detail")
+        val gameId = req.queryParam("gameId")
+        return Mono.justOrEmpty(gameId)
+                .flatMap{gameService.getGame(it)}
+                .flatMap{
+                    ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(it)
+                }.onErrorResume {
+                    ServerResponse.badRequest()
+                            .bodyValue(ErrorBody(it.message.orEmpty()))
+                }
     }
 
     fun extractSourcesParam(sources: Optional<String>): List<String> {

@@ -6,10 +6,7 @@ import de.submergedtree.tabletopcalendar.bggGameSearchObjects
 import de.submergedtree.tabletopcalendar.bggGameSearchObjectsFlux
 import de.submergedtree.tabletopcalendar.game.impl.AttributeProviderCacheProxy
 import de.submergedtree.tabletopcalendar.game.impl.BGGSearchObject
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
@@ -42,22 +39,16 @@ class AttributeProviderCacheProxyTest {
 
     @Test
     fun `is Provider of test subject`() {
-        whenever(gameAttributeProviderMock.isProviderOf(gso)).thenReturn(Mono.just(true))
+        whenever(gameAttributeProviderMock.isProviderOf(gso)).thenReturn(true)
         val res = attributeProviderCacheProxy.isProviderOf(gso)
-
-        StepVerifier.create(res)
-                .expectNext(true)
-                .verifyComplete()
+        Assertions.assertTrue(res)
     }
 
     @Test
     fun `is not Provider of test subject`() {
-        whenever(gameAttributeProviderMock.isProviderOf(gso)).thenReturn(Mono.just(false))
+        whenever(gameAttributeProviderMock.isProviderOf(gso)).thenReturn(false)
         val res = attributeProviderCacheProxy.isProviderOf(gso)
-
-        StepVerifier.create(res)
-                .expectNext(false)
-                .verifyComplete()
+        Assertions.assertFalse(res)
     }
 
     @Test

@@ -13,7 +13,8 @@ class GameRouter {
                 (GET("/search") and queryParam("query"){true}//{it.length >= 3}
                         and queryParam("sources"){true})
                         .invoke(gameHandler::search)
-                GET("/detail", gameHandler::getGameDetail)
+                (GET("/detail") and queryParam("gameId"){true})
+                        .invoke(gameHandler::getGameDetail)
             }
         }
     }

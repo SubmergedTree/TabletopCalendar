@@ -16,9 +16,9 @@ val bggGameSearchObjects: Array<GameSearchObject> = arrayOf(BGGSearchObject("gam
     BGGSearchObject("game2", "456", "2005"))
 
 val searchGameResponses: Array<SearchGameResponse> = arrayOf(
-        SearchGameResponse("game1","2000", "BoardGameGeek", "123"),
-        SearchGameResponse("game2","2005", "BoardGameGeek", "123"))
+        SearchGameResponse("game1","2000", "BoardGameGeek", "eyJuYW1lIjoiZ2FtZTEiLCJiZ2dJZCI6IjEyMyIsInllYXJQdWJsaXNoZWQiOiIyMDAwIiwicHJvdmlkZXJLZXkiOiJCb2FyZEdhbWVHZWVrIn0="),
+        SearchGameResponse("game2","2005", "BoardGameGeek",  "eyJuYW1lIjoiZ2FtZTIiLCJiZ2dJZCI6IjQ1NiIsInllYXJQdWJsaXNoZWQiOiIyMDA1IiwicHJvdmlkZXJLZXkiOiJCb2FyZEdhbWVHZWVrIn0="))
 
 val searchGameResponsesFlux: Flux<SearchGameResponse> = Flux.just(
-        SearchGameResponse("game1","2000", "BoardGameGeek", "123"),
-        SearchGameResponse("game2","2005", "BoardGameGeek", "123"))
+        SearchGameResponse("game1","2000", "BoardGameGeek",  "eyJuYW1lIjoiZ2FtZTEiLCJiZ2dJZCI6IjEyMyIsInllYXJQdWJsaXNoZWQiOiIyMDAwIiwicHJvdmlkZXJLZXkiOiJCb2FyZEdhbWVHZWVrIn0="),
+        SearchGameResponse("game2","2005", "BoardGameGeek",  "eyJuYW1lIjoiZ2FtZTIiLCJiZ2dJZCI6IjQ1NiIsInllYXJQdWJsaXNoZWQiOiIyMDA1IiwicHJvdmlkZXJLZXkiOiJCb2FyZEdhbWVHZWVrIn0="))

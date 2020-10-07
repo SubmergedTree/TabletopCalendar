@@ -32,9 +32,9 @@ class AttributeProviderCacheProxy(
                     }
 
 
-    override fun getAttributes(searchId: String): Mono<Map<String, String>> {
-        TODO("Not yet implemented")
-    }
+    // TODO use cache
+    override fun getAttributes(gameSearchObject: GameSearchObject): Mono<Map<String, String>> =
+        toProxy.getAttributes(gameSearchObject)
 
     override fun isProviderOf(gameSearchObject: GameSearchObject) =
             toProxy.isProviderOf(gameSearchObject)

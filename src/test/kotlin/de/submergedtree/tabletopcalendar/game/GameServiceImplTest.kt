@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -18,22 +19,22 @@ class GameServiceImplTest {
     lateinit var gameService: GameService
     lateinit var attributeProvider1: GameAttributeProvider
     lateinit var attributeProvider2: GameAttributeProvider
-    lateinit var searchObjectCacheService: SearchObjectCacheService
+    lateinit var gameSearchObjectDecoder: GameSearchObjectDecoderService
 
     @BeforeAll
     fun setUp() {
-        searchObjectCacheService = mock()
+        gameSearchObjectDecoder = mock()
         attributeProvider1 = mock()
         attributeProvider2 = mock()
         val attributeProviderList = listOf(attributeProvider1, attributeProvider2)
-        gameService = GameServiceImpl(attributeProviderList, searchObjectCacheService)
+        gameService = GameServiceImpl(attributeProviderList, gameSearchObjectDecoder)
     }
 
     @AfterEach
     fun afterEach() {
         reset(attributeProvider1)
         reset(attributeProvider2)
-        reset(searchObjectCacheService)
+        reset(gameSearchObjectDecoder)
     }
 
     @Test
@@ -56,6 +57,7 @@ class GameServiceImplTest {
         verify(attributeProvider2, times(1)).provider
         verifyNoMoreInteractions(attributeProvider1)
         verifyNoMoreInteractions(attributeProvider2)
+        verifyNoMoreInteractions(gameSearchObjectDecoder)
     }
 
     @Test
@@ -70,6 +72,7 @@ class GameServiceImplTest {
         verify(attributeProvider2, times(1)).search("ABCD")
         verifyNoMoreInteractions(attributeProvider1)
         verifyNoMoreInteractions(attributeProvider2)
+        verifyNoMoreInteractions(gameSearchObjectDecoder)
     }
 
     @Test
@@ -78,6 +81,7 @@ class GameServiceImplTest {
         whenever(attributeProvider1.provider).thenReturn("BoardGameGeek")
         whenever(attributeProvider2.search("ABCD")).thenReturn(Flux.empty())
         whenever(attributeProvider2.provider).thenReturn("FooSource")
+
         val res = gameService.searchGame("ABCD", ArrayList())
         StepVerifier.create(res)
                 .expectNext(searchGameResponses[0])
@@ -88,6 +92,7 @@ class GameServiceImplTest {
         verify(attributeProvider2, times(1)).search("ABCD")
         verifyNoMoreInteractions(attributeProvider1)
         verifyNoMoreInteractions(attributeProvider2)
+        verifyNoMoreInteractions(gameSearchObjectDecoder)
     }
 
 }
