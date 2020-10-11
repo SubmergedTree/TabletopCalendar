@@ -2,6 +2,7 @@ package de.submergedtree.tabletopcalendar.game.web
 
 import de.submergedtree.tabletopcalendar.game.FaultyQuery
 import de.submergedtree.tabletopcalendar.game.GameService
+import de.submergedtree.tabletopcalendar.web.ErrorBody
 import de.submergedtree.tabletopcalendar.web.parseCommaSeparatedStringToArray
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.http.HttpStatus
@@ -13,7 +14,6 @@ import reactor.core.publisher.Mono
 import java.util.*
 import kotlin.collections.ArrayList
 
-data class ErrorBody(val error: String)
 
 @Component
 class GameHandler(private val gameService: GameService): Logging {
@@ -30,6 +30,7 @@ class GameHandler(private val gameService: GameService): Logging {
                         .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(it.toTypedArray())
                 }.onErrorResume {
+                    logger.error(it)
                     when(it!!) {
                         is FaultyQuery -> ServerResponse.badRequest()
                                 .bodyValue(ErrorBody("Search param must be longer then 3 chars"))
@@ -49,6 +50,7 @@ class GameHandler(private val gameService: GameService): Logging {
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(it)
                 }.onErrorResume {
+                    logger.error(it)
                     ServerResponse.badRequest()
                             .bodyValue(ErrorBody(it.message.orEmpty()))
                 }

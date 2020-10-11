@@ -3,7 +3,7 @@ package de.submergedtree.tabletopcalendar.user
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
-import de.submergedtree.tabletopcalendar.user.impl.UserDao
+import de.submergedtree.tabletopcalendar.user.impl.User
 import de.submergedtree.tabletopcalendar.user.impl.UserRepository
 import de.submergedtree.tabletopcalendar.user.impl.UserServiceImpl
 import de.submergedtree.tabletopcalendar.usersFlux
@@ -35,7 +35,7 @@ class UserServiceImplTest {
     fun getAllTest() {
         Mockito.`when`(userRepository.findAll())
                 .thenReturn(usersFlux)
-        val match = Predicate<UserDao> { { u: UserDao -> usersFlux.any { saved: UserDao -> saved == u } }(it)
+        val match = Predicate<User> { { u: User -> usersFlux.any { saved: User -> saved == u } }(it)
                 .block()?: false }
 
         StepVerifier.create(userService.getAll())
@@ -48,24 +48,24 @@ class UserServiceImplTest {
     fun getUsernameTest_UserDoesNotExist() {
         Mockito.`when`(userRepository.findById("123"))
                 .thenReturn(Mono.empty())
-        Mockito.`when`(userRepository.save(UserDao("123", "defaultName")))
-                .thenReturn(Mono.just(UserDao("123", "defaultName")))
+        Mockito.`when`(userRepository.save(User("123", "defaultName")))
+                .thenReturn(Mono.just(User("123", "defaultName")))
 
-        StepVerifier.create(userService.getUsername("123"))
+        StepVerifier.create(userService.getUsernameOrCreate("123"))
                 .expectNext("defaultName")
                 .verifyComplete()
 
         verify(userRepository, times(1)).findById("123")
-        verify(userRepository, times(1)).save(UserDao("123", "defaultName"))
+        verify(userRepository, times(1)).save(User("123", "defaultName"))
         verifyNoMoreInteractions(userRepository)
     }
 
     @Test
     fun getUsername_UserDoesExist() {
         Mockito.`when`(userRepository.findById("123"))
-                .thenReturn(Mono.just(UserDao("123", "Bart")))
+                .thenReturn(Mono.just(User("123", "Bart")))
 
-        StepVerifier.create(userService.getUsername("123"))
+        StepVerifier.create(userService.getUsernameOrCreate("123"))
                 .expectNext("Bart")
                 .verifyComplete()
 

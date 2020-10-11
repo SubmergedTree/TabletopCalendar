@@ -1,7 +1,7 @@
 package de.submergedtree.tabletopcalendar.user
 
 import com.nhaarman.mockito_kotlin.any
-import de.submergedtree.tabletopcalendar.user.impl.UserDao
+import de.submergedtree.tabletopcalendar.user.impl.User
 import de.submergedtree.tabletopcalendar.user.web.UserHandler
 import de.submergedtree.tabletopcalendar.user.web.UserRouter
 import de.submergedtree.tabletopcalendar.user.web.UsernameData
@@ -41,7 +41,7 @@ class UserRouterTest {
         Mockito.`when`(userHandler.getAllUsersHandler(any()))
                 .thenReturn(ServerResponse
                         .ok()
-                        .body(usersFlux, UserDao::class.java))
+                        .body(usersFlux, User::class.java))
 
         client.get()
                 .uri("/api/user/getAll")

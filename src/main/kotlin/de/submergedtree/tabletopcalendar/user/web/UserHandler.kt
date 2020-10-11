@@ -1,7 +1,7 @@
 package de.submergedtree.tabletopcalendar.user.web
 
 import de.submergedtree.tabletopcalendar.user.UserService
-import de.submergedtree.tabletopcalendar.user.impl.UserDao
+import de.submergedtree.tabletopcalendar.user.impl.User
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -16,12 +16,12 @@ class UserHandler(private val userService : UserService) : Logging {
         logger.info("get All request")
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(userService.getAll(), UserDao::class.java)
+                .body(userService.getAll(), User::class.java)
     }
 
     fun getUsernameHandler(req: ServerRequest): Mono<ServerResponse> {
         val username = req.principal()
-                        .flatMap { userService.getUsername(it.name) }
+                        .flatMap { userService.getUsernameOrCreate(it.name) }
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(username.map { UsernameData(it) }, UsernameData::class.java)

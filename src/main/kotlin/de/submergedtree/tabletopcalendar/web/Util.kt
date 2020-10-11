@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import java.util.*
 import kotlin.collections.ArrayList
 
+data class ErrorBody(val error: String)
+
 fun parseCommaSeparatedStringToArray(str: String): List<String> {
     val trimmed = str.trimEnd(',')
     if (trimmed.isBlank()) {

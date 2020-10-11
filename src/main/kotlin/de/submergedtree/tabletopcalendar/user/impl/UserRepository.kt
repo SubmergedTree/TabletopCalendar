@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
 
 @Document
-data class UserDao(@Id val userKey: String, val userName: String)
-
-interface UserRepository: ReactiveMongoRepository<UserDao, String>
+data class User(@Id val userKey: String, val userName: String)
+// we should hide the information, that mongo is used for services
+interface UserRepository: ReactiveMongoRepository<User, String>

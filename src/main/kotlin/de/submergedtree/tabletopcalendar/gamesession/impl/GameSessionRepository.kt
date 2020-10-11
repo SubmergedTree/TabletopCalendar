@@ -2,26 +2,24 @@ package de.submergedtree.tabletopcalendar.gamesession.impl
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.data.mongodb.repository.Query
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
 import reactor.core.publisher.Flux
 
-@Document
-data class GameHostDao(
-        val player: String,
-        val gameIds: List<String>
+data class GameMongo(
+        val userId: String,
+        val gameSearchKey: String
 )
 
-@Document
-data class GameSessionDao(
+@Document(value = "GameSession")
+data class GameSessionMongo(
         @Id val gameSessionId: String,
         val gameSessionName: String,
         val timestamp: String,
-        val playerIds: List<String>,
-        val hosts: List<GameHostDao>
+        val userIds: List<String>,
+        val hosts: List<GameMongo>
 )
 
-interface GameSessionRepository: ReactiveMongoRepository<GameSessionDao, String> {
-    fun getGameSessionDaosByTimestampBefore(timestamp: String): Flux<GameSessionDao>
-    fun getGameSessionDaosByTimestampAfter(timestamp: String): Flux<GameSessionDao>
+interface GameSessionRepository: ReactiveMongoRepository<GameSessionMongo, String> {
+    fun getGameSessionByTimestampAfter(timestamp: String): Flux<GameSessionMongo>
+    fun deleteGameSessionByTimestampBefore(timestamp: String): Flux<GameSessionMongo>
 }

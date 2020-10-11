@@ -1,6 +1,6 @@
 package de.submergedtree.tabletopcalendar.user
 
-import de.submergedtree.tabletopcalendar.user.impl.UserDao
+import de.submergedtree.tabletopcalendar.user.impl.User
 import de.submergedtree.tabletopcalendar.user.impl.UserRepository
 import de.submergedtree.tabletopcalendar.user.impl.UserServiceImpl
 import org.junit.jupiter.api.Test
@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.context.annotation.Import
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
-import java.util.*
 import java.util.function.Predicate
 
 
@@ -22,10 +21,10 @@ class UserServiceDBAccessTest @Autowired constructor(private val userSvc: UserSe
 
     @Test
     fun getAllTest() {
-        val savedUsers = userRepo.saveAll(Flux.just(UserDao("123", "Bart"),
-                UserDao("321", "Lisa")))
+        val savedUsers = userRepo.saveAll(Flux.just(User("123", "Bart"),
+                User("321", "Lisa")))
         val composite = userSvc.getAll().thenMany(savedUsers)
-        val match = Predicate<UserDao> { {u: UserDao -> savedUsers.any { saved: UserDao -> saved == u } }(it)
+        val match = Predicate<User> { { u: User -> savedUsers.any { saved: User -> saved == u } }(it)
                 .block()?: false }
         StepVerifier
                 .create(composite)
@@ -36,9 +35,9 @@ class UserServiceDBAccessTest @Autowired constructor(private val userSvc: UserSe
 
     @Test
     fun getUsernameTest() {
-        val username = userRepo.saveAll(Flux.just(UserDao("123", "Bart"),
-                UserDao("321", "Lisa")))
-                .then(userSvc.getUsername("123"))
+        val username = userRepo.saveAll(Flux.just(User("123", "Bart"),
+                User("321", "Lisa")))
+                .then(userSvc.getUsernameOrCreate("123"))
         StepVerifier
                 .create(username)
                 .expectNextMatches { u -> u == "Bart"}
@@ -48,8 +47,8 @@ class UserServiceDBAccessTest @Autowired constructor(private val userSvc: UserSe
     // TODO
     @Test
     fun updateUsernameTest() {
-        val updated = userRepo.saveAll(Flux.just(UserDao("621", "Homer"),
-                UserDao("321", "Lisa")))
+        val updated = userRepo.saveAll(Flux.just(User("621", "Homer"),
+                User("321", "Lisa")))
                 .then(userSvc.updateUsername("621", "Marge"))
                 .thenMany(userSvc.getAll())
 /*
