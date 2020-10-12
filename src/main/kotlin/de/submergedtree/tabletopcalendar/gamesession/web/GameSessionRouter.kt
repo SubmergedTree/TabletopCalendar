@@ -20,6 +20,8 @@ class GameSessionRouter(
             }
             (POST("/gameSession"))
                     .invoke(gameSessionHandler::createGameSession)
+            (DELETE(("/gameSession"))
+                    .invoke(gameSessionHandler::deleteGameSession))
         }
     }.filter(filter)
 }

@@ -34,7 +34,6 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService,
         getUser(userKey)
                 .map { userKey }
                 .switchIfEmpty(Mono.error(UnknownUser(userKey)))
-               // .onErrorResume { Mono.error(UnknownUser(userKey)) }
 
     private fun createUser(userKey: String, userName: String) =
             Mono.fromCallable {

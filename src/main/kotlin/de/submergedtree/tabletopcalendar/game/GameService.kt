@@ -17,4 +17,5 @@ class UnknownProvider: Throwable("provider is not known for requested game")
 interface GameService {
     fun searchGame(query: String, sources: List<String>): Flux<SearchGameResponse>
     fun getGame(gameId: String): Mono<DetailGame>
+    fun validateGameKey(gameKey: String): Mono<String>
 }

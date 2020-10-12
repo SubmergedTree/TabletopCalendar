@@ -21,3 +21,5 @@ game:
     maxSize: 1000
     expire: 1
 
+gameSession:
+  daysUntilExpire: 30

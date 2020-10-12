@@ -83,4 +83,29 @@ class UserServiceImplTest {
         // TODO
     }
 
+    @Test
+    fun `validation fails because no user is found for key`() {
+        Mockito.`when`(userRepository.findById("123"))
+                .thenReturn(Mono.empty())
+
+        val res = userService.validateUserKey("123")
+
+        StepVerifier.create(res)
+                .expectError()
+                .verify()
+    }
+
+    @Test
+    fun `validation passes`() {
+        Mockito.`when`(userRepository.findById("123"))
+                .thenReturn(Mono.just(User("123", "Bart")))
+
+        val res = userService.validateUserKey("123")
+
+        StepVerifier.create(res)
+                .expectNext("123")
+                .verifyComplete()
+    }
+
+
 }

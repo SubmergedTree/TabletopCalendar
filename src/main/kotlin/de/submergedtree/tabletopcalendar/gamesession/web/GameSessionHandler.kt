@@ -13,8 +13,11 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.bodyToMono
 import org.springframework.web.server.ServerWebInputException
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
+import java.lang.IllegalArgumentException
 
 data class CreatedSessionResponse(val gameSessionId: String)
+data class DeleteSessionResponse(val gameSessionId: String)
 
 @Component
 class GameSessionHandler(
@@ -61,4 +64,21 @@ class GameSessionHandler(
                         else -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
                     }
                 }
+
+    fun deleteGameSession(req: ServerRequest): Mono<ServerResponse> {
+        val until = req.queryParam("gameSessionId")
+        return Mono.justOrEmpty(until)
+                .flatMap{gameSessionService.deleteSession(it)}
+                .flatMap {
+                    ServerResponse.ok().build()
+                            //.contentType(MediaType.APPLICATION_JSON)
+                            //.bodyValue(DeleteSessionResponse("K/A"))
+                }.switchIfEmpty { ServerResponse.status(HttpStatus.NOT_FOUND).build() }
+                .onErrorResume {
+                    logger.error(it)
+                    ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+                }
+
+    }
+
 }

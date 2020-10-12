@@ -7,6 +7,6 @@ interface GameSessionService {
     fun getSession(gameSessionId: String): Mono<DetailedGameSession>
     fun getSessions(untilFilterTimestamp: String): Flux<DetailedGameSession>
     fun createSession(createGameSession: CreateGameSession): Mono<String>
-    fun deleteExpiredSession(daysUntilExpire: Int)
-    fun deleteSession(gameSessionId: String): Mono<String>
+    fun deleteExpiredSession(daysUntilExpire: Int): Flux<String>
+    fun deleteSession(gameSessionId: String): Mono<Void>
 }
