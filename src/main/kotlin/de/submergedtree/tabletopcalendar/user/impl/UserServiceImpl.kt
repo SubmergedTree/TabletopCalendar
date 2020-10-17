@@ -30,10 +30,10 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService,
                 .flatMap{  u -> userRepository.save(u) }
                 .switchIfEmpty(createUser(userKey, newUserName))
 
-    override fun validateUserKey(userKey: String): Mono<String> =
+    override fun validateUserKey(userKey: String): Mono<Boolean> =
         getUser(userKey)
-                .map { userKey }
-                .switchIfEmpty(Mono.error(UnknownUser(userKey)))
+                .map { true }
+                .switchIfEmpty(Mono.just(false))
 
     private fun createUser(userKey: String, userName: String) =
             Mono.fromCallable {

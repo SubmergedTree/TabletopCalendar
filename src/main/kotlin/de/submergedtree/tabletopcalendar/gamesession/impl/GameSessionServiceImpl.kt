@@ -29,10 +29,10 @@ class GameSessionServiceImpl(
 
     override fun createSession(createGameSession: CreateGameSession): Mono<String> =
             Mono.just(createGameSession)
-                .flatMap{validateUsersIds(it)} //TODO user validation does not work!
-                .flatMap{validateHostUserKey(it)}
+                .filterWhen{validateUsersIds(it.playerIds)}
+                .filterWhen{validateHostUserKey(it.presentedGames)}
                 .flatMapMany { Flux.fromIterable(createGameSession.presentedGames) }
-                .flatMap { g -> validateGameKey(g)}
+                .filterWhen { gameService.validateGameKey(it.gameKey)}
                 .map { GameMongo(it.host, it.gameKey) }
                 .collectList()
                 .map {
@@ -54,19 +54,34 @@ class GameSessionServiceImpl(
     override fun deleteSession(gameSessionId: String): Mono<Void> =
              gameSessionRepository.deleteById(gameSessionId)
 
-    private fun validateUsersIds(createGameSessions: CreateGameSession): Mono<CreateGameSession> =
-        Flux.fromIterable(createGameSessions.playerIds)
-                .map(userService::validateUserKey)
-             //   .doOnNext{println(it)}
-             //   .doOnError { println(it.message) }
+    // can we use Spring Verify on data classes ?
+    override fun updateSession(updateGameSession: UpdateGameSession): Mono<String> =
+        Mono.just(updateGameSession)
+                .filterWhen { g -> gameSessionRepository.existsById(g.gameSessionId)}  // does not work
+                .filterWhen{validateUsersIds(it.playerIds)}
+                .filterWhen{validateHostUserKey(it.presentedGames)}
+                .flatMapMany { Flux.fromIterable(it.presentedGames) }
+                .filterWhen { gameService.validateGameKey(it.gameKey)}
+                .map { GameMongo(it.host, it.gameKey) }
                 .collectList()
-                .map { createGameSessions }
+                .map {
+                    GameSessionMongo(updateGameSession.gameSessionId,
+                            updateGameSession.gameSessionName,
+                            updateGameSession.timestamp,
+                            updateGameSession.playerIds,
+                            it)
+                }.flatMap { gameSessionRepository.save(it) }
+                .map { it.gameSessionId }
 
-    private fun validateHostUserKey(createGameSessions: CreateGameSession): Mono<CreateGameSession> =
-        Flux.fromIterable(createGameSessions.presentedGames)
-                .map { userService.validateUserKey(it.host) }
-                .collectList()
-                .map { createGameSessions }
+    private fun validateUsersIds(userIds: List<String>): Mono<Boolean> =
+        Flux.fromIterable(userIds)
+                .flatMap(userService::validateUserKey)
+                .reduce(true, { acc, next -> acc && next})
+
+    private fun validateHostUserKey(presentedGames: List<CreatePresentedGame>): Mono<Boolean> =
+        Flux.fromIterable(presentedGames)
+                .flatMap { userService.validateUserKey(it.host) }
+                .reduce(true, { acc, next -> acc && next})
 
     private fun toGameSession(gameSessionMongo: GameSessionMongo): Mono<DetailedGameSession> =
          userIdsToUsers(gameSessionMongo.userIds)
@@ -80,12 +95,10 @@ class GameSessionServiceImpl(
                     it.t2)
                 }
 
-    private fun validateGameKey(g: CreatePresentedGame) =
-        gameService.validateGameKey(g.gameKey).map { g }
 
     private fun userIdsToUsers(userIds: List<String>): Flux<User> =
             Flux.fromIterable(userIds)
-                    .flatMap { userService.getUser(it) }
+                    .flatMap { userService.getUser(it) } // TODO should return an anonymous User if no user found for key. -> Ditch user validation in create game Session
 
     private fun persistedGamesToPresentedGames(gameMongo: List<GameMongo>): Flux<PresentedGame> =
             Flux.fromIterable(gameMongo)

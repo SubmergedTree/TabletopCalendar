@@ -3,6 +3,7 @@ package de.submergedtree.tabletopcalendar.gamesession.web
 import de.submergedtree.tabletopcalendar.game.MalformedEncodedGameSearchObject
 import de.submergedtree.tabletopcalendar.gamesession.CreateGameSession
 import de.submergedtree.tabletopcalendar.gamesession.GameSessionService
+import de.submergedtree.tabletopcalendar.gamesession.UpdateGameSession
 import de.submergedtree.tabletopcalendar.web.ErrorBody
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.http.HttpStatus
@@ -16,8 +17,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import java.lang.IllegalArgumentException
 
-data class CreatedSessionResponse(val gameSessionId: String)
-data class DeleteSessionResponse(val gameSessionId: String)
+data class SessionIdResponse(val gameSessionId: String)
 
 @Component
 class GameSessionHandler(
@@ -53,7 +53,7 @@ class GameSessionHandler(
                 .flatMap {
                     ServerResponse.ok()
                             .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue(CreatedSessionResponse(it))
+                            .bodyValue(SessionIdResponse(it))
                 }.onErrorResume {
                     logger.error(it)
                     when(it!!) {
@@ -64,6 +64,24 @@ class GameSessionHandler(
                         else -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
                     }
                 }
+
+    fun updateGameSession(req: ServerRequest): Mono<ServerResponse> =
+            req.bodyToMono<UpdateGameSession>()
+                    .flatMap{gameSessionService.updateSession(it)}
+                    .flatMap {
+                        ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(SessionIdResponse(it))
+                    }.onErrorResume {
+                        logger.error(it)
+                        when(it!!) {
+                            is MalformedEncodedGameSearchObject -> ServerResponse.status(HttpStatus.BAD_REQUEST)
+                                    .bodyValue(ErrorBody("GameKey is invalid"))
+                            is ServerWebInputException -> ServerResponse.status(HttpStatus.BAD_REQUEST)
+                                    .bodyValue(ErrorBody("Invalid body"))
+                            else -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+                        }
+                    }
 
     fun deleteGameSession(req: ServerRequest): Mono<ServerResponse> {
         val until = req.queryParam("gameSessionId")

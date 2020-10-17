@@ -91,8 +91,8 @@ class UserServiceImplTest {
         val res = userService.validateUserKey("123")
 
         StepVerifier.create(res)
-                .expectError()
-                .verify()
+                .expectNext(false)
+                .verifyComplete()
     }
 
     @Test
@@ -103,7 +103,7 @@ class UserServiceImplTest {
         val res = userService.validateUserKey("123")
 
         StepVerifier.create(res)
-                .expectNext("123")
+                .expectNext(true)
                 .verifyComplete()
     }
 

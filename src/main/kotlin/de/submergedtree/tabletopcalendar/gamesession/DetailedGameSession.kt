@@ -28,3 +28,11 @@ data class CreateGameSession(
         val playerIds: List<String>,
         val presentedGames: List<CreatePresentedGame>
 )
+
+data class UpdateGameSession(
+        val gameSessionId: String,
+        val gameSessionName: String,
+        val timestamp: String,
+        val playerIds: List<String>,
+        val presentedGames: List<CreatePresentedGame>
+)

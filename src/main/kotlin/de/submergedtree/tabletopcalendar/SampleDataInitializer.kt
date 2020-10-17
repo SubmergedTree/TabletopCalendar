@@ -31,17 +31,17 @@ class SampleDataInitializer(
     override fun onApplicationEvent(event: ApplicationReadyEvent) {
         repo
                 .deleteAll()
-                .flatMap { gsRepo.deleteAll() }
+        //        .flatMap { gsRepo.deleteAll() }
                 .thenMany(
                         Flux
                                 .just("A", "B", "C", "D")
                                 .zipWithIterable(listOf("12632173", "54354353", "370706342", "98694236"))
                                 .map { User(it.t2, "${it.t1}@email.com") }
                                 .flatMap(repo::save)
-                ).thenMany(
+                )/*.thenMany(
                         Flux.just(gameSession1)
                                 .flatMap(gsRepo::save)
-                )
+                )*/
                 .thenMany(repo.findAll())
                 .subscribe { profile -> logger.info("saving " + profile.toString()) }
 

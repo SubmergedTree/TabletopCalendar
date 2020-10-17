@@ -38,8 +38,10 @@ class GameServiceImpl(@Qualifier("Cached") private val gameAttributeProviders: L
                     DetailGame(gameId, gso.name, attributeMap)
                 }
 
-    override fun validateGameKey(gameKey: String): Mono<String> =
-        getGame(gameKey).map { gameKey }
+    override fun validateGameKey(gameKey: String): Mono<Boolean> =
+        getGame(gameKey)
+                .map { true }
+                .switchIfEmpty(Mono.just(false))
 
     private fun isQueryLongEnough(query: String) =
             query.length >= 3

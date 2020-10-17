@@ -16,5 +16,5 @@ interface UserService {
 
     fun updateUsername(userKey: String,newUserName: String) : Mono<User>
 
-    fun validateUserKey(userKey: String): Mono<String>
+    fun validateUserKey(userKey: String): Mono<Boolean>
 }
