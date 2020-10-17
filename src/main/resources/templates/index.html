@@ -18,15 +18,10 @@
 </style>
 
 <body>
-<h2> Tabletop calendar</h2>
-
-<button id="btn-login" disabled="true" onclick="login()">Log in</button>
-<button id="btn-logout" disabled="true" onclick="logout()">Log out</button>
-
 
 <div id="tabletopCalendarWebApp"></div>
 
-<script>
+<script type="text/javascript">
     let auth0 = null;
     const fetchAuthConfig = () => fetch("/auth_config.json");
 
@@ -58,19 +53,12 @@
 
     const updateUI = async () => {
         const isAuthenticated = await auth0.isAuthenticated();
-
-        document.getElementById("btn-logout").disabled = !isAuthenticated;
-        document.getElementById("btn-login").disabled = isAuthenticated;
-        document.getElementById("tabletopCalendarWebApp").disabled = !isAuthenticated;
-
         if (isAuthenticated) {
             const token = await auth0.getTokenSilently();
             const bearerToken = "Bearer " + token;
             console.log(bearerToken)
-            const app = Elm.Main.init({
-                node: document.getElementById('tabletopCalendarWebApp'),
-                flags: bearerToken
-            });
+            app.ports.toElm.send(bearerToken);
+
         }
     };
 
@@ -86,6 +74,22 @@
         });
     };
 
+    const app = Elm.Main.init({
+        node: document.getElementById('tabletopCalendarWebApp'),
+        flags: {
+            loginMessage: "admin-login",
+            logoutMessage: "admin-logout"
+        }
+    });
+
+    app.ports.toJs.subscribe(function(message) {
+        console.log(message)
+        if (message === "admin-login") {
+            login()
+        } else if (message === "admin-logout") {
+            logout()
+        }
+    });
 
 </script>
 </body>
