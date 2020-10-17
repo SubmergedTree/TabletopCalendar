@@ -42,6 +42,8 @@ class SecurityConfig(@Value("\${auth0.audience}") private val audience: String,
                 .pathMatchers("/auth_config.json").permitAll()
                 .pathMatchers("/api/admin/**").authenticated()
                 .pathMatchers("/api/gameSession/**").permitAll()
+                .pathMatchers("/api/user/**").permitAll()
+                .pathMatchers("/api/game/**").permitAll()
              //   .pathMatchers("/api/management/**").authenticated()
                 .and()
                 .csrf().disable()

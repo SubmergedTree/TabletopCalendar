@@ -1,6 +1,7 @@
 package de.submergedtree.tabletopcalendar.user
 
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.mock
 import de.submergedtree.tabletopcalendar.user.impl.User
 import de.submergedtree.tabletopcalendar.user.web.UserHandler
 import de.submergedtree.tabletopcalendar.user.web.UserRouter
@@ -32,7 +33,7 @@ class UserRouterTest {
 
     @BeforeAll
     fun setUp() {
-        router = UserRouter().userRoutes(userHandler)
+        router = UserRouter(mock()).userRoutes(userHandler)
         client = WebTestClient.bindToRouterFunction(router).build()
     }
 
@@ -56,21 +57,22 @@ class UserRouterTest {
     }
 
     @Test
-    fun getUsernameTest() {
-        Mockito.`when`(userHandler.getUsernameHandler(any()))
+    fun getUserTest() {
+        Mockito.`when`(userHandler.getUser(any()))
                 .thenReturn(ServerResponse
                         .ok()
-                        .body(Mono.just(UsernameData("Bart")), UsernameData::class.java))
+                        .body(Mono.just(User("123", "Bart")), UsernameData::class.java))
 
         client.get()
-                .uri("/api/user/username")
+                .uri("/api/user/getUser")
                 .accept(MediaType.ALL)
                 .exchange()
                 .expectStatus().isOk
                 .expectBody()
+                .jsonPath("$.userKey").isEqualTo("123")
                 .jsonPath("$.userName").isEqualTo("Bart")
     }
-
+/*
     @Test
     @WithMockUser
     fun changeUsernameTest() {
@@ -102,5 +104,5 @@ class UserRouterTest {
                 .exchange()
                 .expectStatus().is4xxClientError
     }
-
+*/
 }

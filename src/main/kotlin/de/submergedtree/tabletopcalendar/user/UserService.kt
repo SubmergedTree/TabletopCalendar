@@ -8,11 +8,13 @@ class UnknownUser(user: String): Throwable("User: $user is unknown")
 
 interface UserService {
 
+    fun createUser(userName: String): Mono<User>
+
+    fun deleteUser(userKey: String): Mono<Void>
+
     fun getUser(userKey: String): Mono<User>
 
     fun getAll(): Flux<User>
-
-    fun getUsernameOrCreate(userKey: String): Mono<String>
 
     fun updateUsername(userKey: String,newUserName: String) : Mono<User>
 

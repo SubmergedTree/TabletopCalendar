@@ -19,14 +19,15 @@ class UserHandler(private val userService : UserService) : Logging {
                 .body(userService.getAll(), User::class.java)
     }
 
-    fun getUsernameHandler(req: ServerRequest): Mono<ServerResponse> {
-        val username = req.principal()
-                        .flatMap { userService.getUsernameOrCreate(it.name) }
+    fun getUser(req: ServerRequest): Mono<ServerResponse> {
+        val user = Mono.justOrEmpty(req.queryParam("userKey"))
+                        .flatMap { userService.getUser(it) }
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(username.map { UsernameData(it) }, UsernameData::class.java)
+                .body(user, User::class.java)
     }
 
+    /*
     fun updateUsername(req: ServerRequest) : Mono<ServerResponse> {
          val userName = Mono.fromCallable { req.queryParam("newUsername") }
                 .flatMap { optional -> optional.map{Mono.just(it)}.orElseGet{Mono.empty()} }
@@ -38,5 +39,5 @@ class UserHandler(private val userService : UserService) : Logging {
                 .flatMap{ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(it, UsernameData::class.java)}
-    }
+    }*/
 }

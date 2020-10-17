@@ -1,12 +1,15 @@
 package de.submergedtree.tabletopcalendar.user
 
+import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
+import de.submergedtree.tabletopcalendar.gamesession.IdentifierService
 import de.submergedtree.tabletopcalendar.user.impl.User
 import de.submergedtree.tabletopcalendar.user.impl.UserRepository
 import de.submergedtree.tabletopcalendar.user.impl.UserServiceImpl
 import de.submergedtree.tabletopcalendar.usersFlux
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -23,12 +26,21 @@ class UserServiceImplTest {
     @Mock
     lateinit var userRepository: UserRepository
 
+    @Mock
+    lateinit var identifierService: IdentifierService
+
     private lateinit var userService: UserService
 
     @BeforeAll
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        userService = UserServiceImpl(userRepository)
+        userService = UserServiceImpl(userRepository, identifierService)
+    }
+
+    @AfterEach
+    fun afterEach() {
+        reset(userRepository)
+        reset(identifierService)
     }
 
     @Test
@@ -45,28 +57,24 @@ class UserServiceImplTest {
     }
 
     @Test
-    fun getUsernameTest_UserDoesNotExist() {
+    fun getUser_UserDoesNotExist() {
         Mockito.`when`(userRepository.findById("123"))
                 .thenReturn(Mono.empty())
-        Mockito.`when`(userRepository.save(User("123", "defaultName")))
-                .thenReturn(Mono.just(User("123", "defaultName")))
 
-        StepVerifier.create(userService.getUsernameOrCreate("123"))
-                .expectNext("defaultName")
+        StepVerifier.create(userService.getUser("123"))
                 .verifyComplete()
 
         verify(userRepository, times(1)).findById("123")
-        verify(userRepository, times(1)).save(User("123", "defaultName"))
         verifyNoMoreInteractions(userRepository)
     }
 
     @Test
-    fun getUsername_UserDoesExist() {
+    fun getUser_UserDoesExist() {
         Mockito.`when`(userRepository.findById("123"))
                 .thenReturn(Mono.just(User("123", "Bart")))
 
-        StepVerifier.create(userService.getUsernameOrCreate("123"))
-                .expectNext("Bart")
+        StepVerifier.create(userService.getUser("123"))
+                .expectNext(User("123", "Bart"))
                 .verifyComplete()
 
         verify(userRepository, times(1)).findById("123")

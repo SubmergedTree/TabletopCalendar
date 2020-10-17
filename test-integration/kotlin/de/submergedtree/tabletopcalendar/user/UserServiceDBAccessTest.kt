@@ -14,7 +14,7 @@ import java.util.function.Predicate
 
 //TODO: use embedded mongo db for integration tests
 //TODO: delete all entries after each test.
-
+/*
 @DataMongoTest
 @Import(UserServiceImpl::class)
 class UserServiceDBAccessTest @Autowired constructor(private val userSvc: UserServiceImpl, private val userRepo: UserRepository) {
@@ -33,16 +33,6 @@ class UserServiceDBAccessTest @Autowired constructor(private val userSvc: UserSe
                 .verifyComplete()
     }
 
-    @Test
-    fun getUsernameTest() {
-        val username = userRepo.saveAll(Flux.just(User("123", "Bart"),
-                User("321", "Lisa")))
-                .then(userSvc.getUsernameOrCreate("123"))
-        StepVerifier
-                .create(username)
-                .expectNextMatches { u -> u == "Bart"}
-                .verifyComplete()
-    }
 
     // TODO
     @Test
@@ -51,12 +41,12 @@ class UserServiceDBAccessTest @Autowired constructor(private val userSvc: UserSe
                 User("321", "Lisa")))
                 .then(userSvc.updateUsername("621", "Marge"))
                 .thenMany(userSvc.getAll())
-/*
+
         StepVerifier
                 .create(updated)
                 .expectNextMatches { u -> u.userName == "Marge"}
                 .expectNextMatches { u -> u.userName == "Lisa"}
-                .verifyComplete()*/
+                .verifyComplete()
     }
 
-}
+}*/
