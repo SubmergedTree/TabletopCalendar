@@ -19,3 +19,7 @@ Command to compile and copy:
 elm make src/Main.elm --output=../src/main/resources/static/built/main.js
 ```
 
+Dev Server:
+```
+elm-live src/Main.elm --open --pushstate --start-page=target/index.html -- --output=main.j
+```

@@ -1,26 +1,11 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Tabletop Calendar</title>
     <script src="main.js"></script>
     <script src="https://cdn.auth0.com/js/auth0-spa-js/1.9/auth0-spa-js.production.js"></script>
 </head>
 
-<style>
-    .hidden {
-        display: none;
-    }
-
-    label {
-        margin-bottom: 10px;
-        display: block;
-    }
-</style>
-
 <body>
-
-<div id="tabletopCalendarWebApp"></div>
-
 <script type="text/javascript">
     let auth0 = null;
     const fetchAuthConfig = () => fetch("/auth_config.json");
@@ -93,4 +78,5 @@
 
 </script>
 </body>
+
 </html>
