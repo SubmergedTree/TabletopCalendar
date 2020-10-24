@@ -22,6 +22,7 @@ main =
 type alias Flags =
     { loginMessage : String
     , logoutMessage : String
+    , backendUrl: String
     }
 
 type Msg
@@ -36,6 +37,7 @@ type alias Model =
     , route: Route
     , navKey : Nav.Key
     , page : Page
+    , backendUrl: String
     }
 
 type Page
@@ -50,6 +52,7 @@ init flags url navKey =
             , route = Route.parseUrl url
             , navKey = navKey
             , page = NotFoundPage
+            , backendUrl = flags.backendUrl
             }
     in
     initCurrentPage (model, Cmd.none)
@@ -106,7 +109,7 @@ update msg model =
 
         (OverviewMsg overviewMsg, Detail detailModel) ->
             let
-                (newModel, newCmd) = Detail.update overviewMsg detailModel
+                (newModel, newCmd) = Detail.update overviewMsg model.backendUrl detailModel
             in
             ({ model | page = Detail newModel}, Cmd.map OverviewMsg newCmd)
 
