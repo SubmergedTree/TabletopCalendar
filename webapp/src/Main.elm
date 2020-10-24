@@ -8,7 +8,7 @@ import Browser.Navigation as Nav
 import Header
 import Html exposing (Html, div, h2, h3, text)
 import Html.Attributes exposing (class, id)
-import Routing as Route exposing (Route(..))
+import Routing as Route exposing (..)
 import Url exposing (Url)
 
 main =
@@ -38,6 +38,7 @@ type alias Model =
     { adminLogin: AdminLogin.Model
     , route: Route
     , navKey : Nav.Key
+    , calendarIdentifier: Maybe String
     , page : Page
     , backendUrl: String
     }
@@ -52,6 +53,7 @@ init flags url navKey =
         model =
             { adminLogin = adminLoginModel
             , route = Route.parseUrl url
+            , calendarIdentifier = parseQuery url "calendarIdentifier"
             , navKey = navKey
             , page = NotFoundPage
             , backendUrl = flags.backendUrl
@@ -139,7 +141,7 @@ currentView: Model -> Html Msg
 currentView model =
     case model.page of
         NotFoundPage ->
-            notFoundView
+             notFoundView
         Detail detailModel ->
             Detail.view detailModel
                 |> Html.map OverviewMsg

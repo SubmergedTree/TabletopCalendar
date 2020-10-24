@@ -1,0 +1,16 @@
+{
+  "name": "elm-helper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "elm-test-init": "elm-test init",
+    "elm-test": "elm-test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "elm-test": "^0.19.1-revision4"
+  }
+}
