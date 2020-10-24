@@ -1,6 +1,7 @@
 port module AdminLogin exposing (..)
 
 import Html exposing (Attribute, Html, button, div, text)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Json.Encode exposing (Value)
 import Json.Decode as Decode
@@ -46,19 +47,13 @@ view : Model -> Html Msg
 view model =
     case model.adminBearerToken /= "" of
         True ->
-            div []
-                [
-                 button
-                    [ onClick (SendToJs model.logoutAdminMessage) ]
-                    [ text "Logout" ]
-                 ]
+             button
+                [ class "mui-btn mui-btn--raised mui-btn--primary", onClick (SendToJs model.logoutAdminMessage) ]
+                [ text "Logout" ]
         False ->
-              div []
-                    [
-                     button
-                        [ onClick (SendToJs model.loginAdminMessage) ]
-                        [ text "To admin console" ]
-                     ]
+             button
+                [class "mui-btn mui-btn--raised mui-btn--primary", onClick (SendToJs model.loginAdminMessage) ]
+                [ text "Admin Login" ]
 
 
 decodeValue : Value -> Msg

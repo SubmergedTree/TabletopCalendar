@@ -5,7 +5,9 @@ import Detail
 
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav
+import Header
 import Html exposing (Html, div, h2, h3, text)
+import Html.Attributes exposing (class, id)
 import Routing as Route exposing (Route(..))
 import Url exposing (Url)
 
@@ -122,14 +124,16 @@ view model =
     {
      title = "Tabletop"
      , body = [
-         div []
-              [
-                  h2 [] [text "Tabletop Calendar"]
-                  ,AdminLogin.view model.adminLogin |> Html.map AdminLoginMsg
-                  , currentView model
-              ]
+         Header.view AdminLogin.view model.adminLogin |> Html.map AdminLoginMsg
+         , wrapIntoBody <| currentView model
       ]
     }
+
+wrapIntoBody: (Html Msg) -> Html Msg
+wrapIntoBody toWrap =
+    div [id "content",class "mui-container-fluid"] [
+        toWrap
+    ]
 
 currentView: Model -> Html Msg
 currentView model =

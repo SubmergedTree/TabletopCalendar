@@ -1,6 +1,7 @@
 module Detail exposing (..)
 
-import Html exposing (Html, h3, text)
+import Html exposing (Html, br, div, h3, text)
+import Html.Attributes exposing (class)
 import Http
 import Json.Decode as Decode exposing (Decoder, map3)
 import Json.Decode.Extra as Decode
@@ -27,11 +28,21 @@ init = ({foo = "", gameFetchState = Loading}, getGame)
 view: Model -> Html Msg
 view model =
     case model.gameFetchState of
-        Failure -> h3 [] [ text "Failed to get from server" ]
+        Failure -> renderCard "Error" <| div [] [(text "Failed to get from server")]
         Loading -> h3 [] [ text "Get game from server" ]
         Success game -> h3 [] [ text game.name ]
 
-
+renderCard heading field  =
+    div [class "mui-row"] [
+        div [class "mui-col-sm-10 mui-col-sm-offset-1"] [
+            br [] []
+            , br [] []
+            , div [class "mui--text-dark-secondary mui--text-body2"] [text heading]
+            , div [class "mui-divider"] []
+            , br [] []
+            , field
+        ]
+    ]
 
 update: Msg -> String -> Model -> ( Model, Cmd Msg )
 update msg _ model =
